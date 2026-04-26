@@ -36,16 +36,17 @@ public:
 
     virtual void Destroy() = 0;
 
-    virtual const RedRHIAdapterInfo *GetAdapterInfo() = 0;
+    virtual RedRHIAdapterInfo *GetAdapterInfo() = 0;
 
-    virtual const RedRHIBuffer *CreateBuffer(
+    virtual RedRHIBuffer *CreateBuffer(
         RedRHIBufferUsage _usage,
         RedRHIMemoryType _memory_type,
-        int32_t _size,
-        int32_t _stride
+        size_t _size,
+        int32_t _stride,
+        void *_data
     ) = 0;
 
-    virtual const RedRHITexture *CreateTexture(
+    virtual RedRHITexture *CreateTexture(
         RedRHITextureFormat _usage,
         RedRHITextureSamplerType _sampler_type,
         RedRHITextureAddressType _address_type,

@@ -39,7 +39,21 @@ int main() {
             if (e.type == SDL_EVENT_QUIT) running = false;
         }
 
-        rhi_device->DrawFrame();
+        {
+            std::vector<float> vertices = {
+
+            };
+
+            RedRHIBuffer *vb = rhi_device->CreateBuffer(
+                RED_RHI_BUFFER_USAGE_VERTEX,
+                RED_RHI_MEMORY_TYPE_DEVICE,
+                vertices.size(),
+                3,
+                vertices.data()
+            );
+
+            rhi_device->DrawFrame();
+        }
 
         SDL_GL_SwapWindow(window);
     }

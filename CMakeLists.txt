@@ -20,14 +20,14 @@ set(RHI_SRC
         RedRHI/RedRHIResourcePool.h
         RedRHI/RedRHIShader.h
         RedRHI/RedRHISwapChain.h
-
-        RedRHI/OpenGL/RedOpenGLDevice.cpp
-        RedRHI/OpenGL/RedOpenGLDevice.h
-        RedRHI/OpenGL/RedOpenGL.h
         RedRHI/RedRHIUtility.h
+
         RedRHI/OpenGL/glad/glad.c
         RedRHI/OpenGL/glad/glad.h
         RedRHI/OpenGL/glad/khrplatform.h
+        RedRHI/OpenGL/RedOpenGLDevice.cpp
+        RedRHI/OpenGL/RedOpenGLDevice.h
+        RedRHI/OpenGL/RedOpenGL.h
 )
 
 add_executable(RedRHI main.cpp ${RHI_SRC})

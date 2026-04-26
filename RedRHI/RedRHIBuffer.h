@@ -68,8 +68,7 @@ struct RedRHIResource {
 struct RedRHIBuffer : RedRHIResource {
     RedRHIBufferUsage usage;
     RedRHIMemoryType memory_type;
-    int32_t size;
-    int32_t stride;
+    size_t size;
 };
 
 struct RedRHITexture : RedRHIResource {

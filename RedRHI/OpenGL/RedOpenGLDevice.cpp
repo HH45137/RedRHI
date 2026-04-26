@@ -47,15 +47,35 @@ RedRHIAdapterInfo *RedOpenGLDevice::GetAdapterInfo() {
 RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
     RedRHIBufferUsage _usage,
     RedRHIMemoryType _memory_type,
-    int32_t _size,
-    int32_t _stride
+    size_t _size,
+    int32_t _stride,
+    void *_data
 ) {
     auto buffer = new RedRHIBuffer{};
 
     buffer->usage = _usage;
     buffer->memory_type = _memory_type;
     buffer->size = _size;
-    buffer->stride = _stride;
+
+    switch (_usage) {
+        case RED_RHI_BUFFER_USAGE_VERTEX:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_INDEX:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_UNIFORM:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_STORAGE:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_STAGING:
+            break;
+
+        default:
+            throw std::runtime_error("Invalid buffer usage");
+    }
 
     {
         buffer->is_destroy = false;
