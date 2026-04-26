@@ -27,5 +27,7 @@ public:
         int32_t _mip_levels
     ) override;
 
+    void DrawFrame() override;
+
 private:
 };

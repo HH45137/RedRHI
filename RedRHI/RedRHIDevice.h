@@ -47,4 +47,6 @@ public:
         int32_t _height,
         int32_t _mip_levels
     ) = 0;
+
+    virtual void DrawFrame() = 0;
 };
