@@ -22,13 +22,24 @@ void RedOpenGLDevice::Destroy() {
 RedRHIAdapterInfo *RedOpenGLDevice::GetAdapterInfo() {
     auto adapter_info = new RedRHIAdapterInfo{};
 
-    adapter_info->name = "GPU NAME IS HERE!";
-    adapter_info->ram_size = 0;
-    adapter_info->max_texture_size = 0;
-    adapter_info->max_uniform_buffer_range = 0;
+    adapter_info->vendor = reinterpret_cast<const char *>(glGetString(GL_VENDOR));
+    adapter_info->gpu = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+    adapter_info->gl_version = reinterpret_cast<const char *>(glGetString(GL_VERSION));
+    adapter_info->glsl_version = reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-    adapter_info->formats.push_back(RED_RHI_TEXTURE_FORMAT_RGB_8);
-    adapter_info->features.push_back(RED_RHI_FEATURE_RAY_TRACING);
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &adapter_info->max_texture_2d_size);
+    glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &adapter_info->max_texture_3d_size);
+    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &adapter_info->max_uniform_buffer_bindings);
+    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &adapter_info->max_uniform_block_size);
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &adapter_info->max_uniform_buffer_offset_alignment);
+
+    // Get all supported extensions
+    GLint num_extensions = 0;
+    std::vector<std::string> extensions;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &num_extensions);
+    for (int i = 0; i < num_extensions; ++i) {
+        extensions.emplace_back(reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i)));
+    }
 
     return adapter_info;
 }

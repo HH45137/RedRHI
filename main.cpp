@@ -30,6 +30,7 @@ int main() {
 
     RedRHIDevice *rhi_device = new RedOpenGLDevice();
     rhi_device->Init();
+    auto adapter_info = rhi_device->GetAdapterInfo();
 
     bool running = true;
     while (running) {

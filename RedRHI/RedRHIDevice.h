@@ -14,10 +14,16 @@ enum RedRHIFeature {
 };
 
 struct RedRHIAdapterInfo {
-    std::string name;
-    size_t ram_size;
-    size_t max_texture_size;
-    size_t max_uniform_buffer_range;
+    std::string gpu;
+    std::string vendor;
+    std::string gl_version;
+    std::string glsl_version;
+    int32_t ram_size;
+    int32_t max_texture_2d_size;
+    int32_t max_texture_3d_size;
+    int32_t max_uniform_buffer_bindings;
+    int32_t max_uniform_block_size;
+    int32_t max_uniform_buffer_offset_alignment;
     std::vector<RedRHITextureFormat> formats;
     std::vector<RedRHIFeature> features;
 };
