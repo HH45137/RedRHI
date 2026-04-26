@@ -6,13 +6,6 @@
 #include "RedRHIUtility.h"
 
 
-enum RedRHIResourceState {
-    RED_RHI_RESOURCE_STATE_UNINITIALIZED,
-    RED_RHI_RESOURCE_STATE_INITIALIZED,
-
-    RED_RHI_RESOURCE_STATE_COUNT
-};
-
 enum RedRHIBufferUsage {
     RED_RHI_BUFFER_USAGE_VERTEX,
     RED_RHI_BUFFER_USAGE_INDEX,
@@ -59,9 +52,7 @@ enum RedRHITextureFormat {
 
 struct RedRHIResource {
     std::string uuid = GEN_UUID_STR;
-    RedRHIResourceState state;
     size_t ref_count;
-    bool is_destroy;
     std::string debug_name;
 };
 

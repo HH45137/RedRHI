@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "RedRHIBuffer.h"
+#include "RedRHIResourcePool.h"
 
 
 enum RedRHIFeature {
@@ -56,4 +57,7 @@ public:
     ) = 0;
 
     virtual void DrawFrame() = 0;
+
+protected:
+    RedRHIResourcePool resource_poll;
 };

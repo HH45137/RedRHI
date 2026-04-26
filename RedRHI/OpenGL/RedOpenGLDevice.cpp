@@ -16,6 +16,8 @@ bool RedOpenGLDevice::Init() {
 }
 
 void RedOpenGLDevice::Destroy() {
+    resource_poll.ForceReleaseAll();
+
     std::cout << "The OpenGL backend has been destroyed." << std::endl;
 }
 
@@ -77,13 +79,7 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
             throw std::runtime_error("Invalid buffer usage");
     }
 
-    {
-        buffer->is_destroy = false;
-        buffer->state = RED_RHI_RESOURCE_STATE_INITIALIZED;
-        buffer->debug_name = "This is a Buffer";
-        buffer->ref_count = 0;
-        buffer->ref_count++;
-    }
+    resource_poll.Register(buffer);
 
     return buffer;
 }
@@ -104,13 +100,7 @@ RedRHITexture *RedOpenGLDevice::CreateTexture(
     texture->height = _height;
     texture->mip_levels = _mip_levels;
 
-    {
-        texture->is_destroy = false;
-        texture->state = RED_RHI_RESOURCE_STATE_INITIALIZED;
-        texture->debug_name = "This is a Texture";
-        texture->ref_count = 0;
-        texture->ref_count++;
-    }
+    resource_poll.Register(texture);
 
     return texture;
 }

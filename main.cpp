@@ -32,6 +32,32 @@ int main() {
     rhi_device->Init();
     auto adapter_info = rhi_device->GetAdapterInfo();
 
+    // Ready
+    RedRHIBuffer *vertex_buffer = nullptr;
+    RedRHITexture *texture = nullptr;
+    {
+        std::vector<float> vertices = {
+
+        };
+
+        vertex_buffer = rhi_device->CreateBuffer(
+            RED_RHI_BUFFER_USAGE_VERTEX,
+            RED_RHI_MEMORY_TYPE_DEVICE,
+            vertices.size(),
+            3,
+            vertices.data()
+        );
+
+        texture = rhi_device->CreateTexture(
+            RED_RHI_TEXTURE_FORMAT_RGB_8,
+            RED_RHI_TEXTURE_SAMPLER_TYPE_LINEAR,
+            RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
+            1024,
+            1024,
+            8
+        );
+    }
+
     bool running = true;
     while (running) {
         SDL_Event e;
@@ -39,19 +65,8 @@ int main() {
             if (e.type == SDL_EVENT_QUIT) running = false;
         }
 
+        // Draw
         {
-            std::vector<float> vertices = {
-
-            };
-
-            RedRHIBuffer *vb = rhi_device->CreateBuffer(
-                RED_RHI_BUFFER_USAGE_VERTEX,
-                RED_RHI_MEMORY_TYPE_DEVICE,
-                vertices.size(),
-                3,
-                vertices.data()
-            );
-
             rhi_device->DrawFrame();
         }
 
