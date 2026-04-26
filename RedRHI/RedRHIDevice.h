@@ -26,23 +26,25 @@ class RedRHIDevice {
 public:
     virtual ~RedRHIDevice() = default;
 
-    virtual const RedRHIDevice *Init(void *window_handle) = 0;
+    virtual bool Init() = 0;
+
+    virtual void Destroy() = 0;
 
     virtual const RedRHIAdapterInfo *GetAdapterInfo() = 0;
 
     virtual const RedRHIBuffer *CreateBuffer(
-        RedRHIBufferUsage usage,
-        RedRHIMemoryType memory_type,
-        int32_t size,
-        int32_t stride
+        RedRHIBufferUsage _usage,
+        RedRHIMemoryType _memory_type,
+        int32_t _size,
+        int32_t _stride
     ) = 0;
 
     virtual const RedRHITexture *CreateTexture(
-        RedRHITextureFormat usage,
-        RedRHITextureSamplerType sampler_type,
-        RedRHITextureAddressType address_type,
-        int32_t width,
-        int32_t height,
-        int32_t mip_levels
+        RedRHITextureFormat _usage,
+        RedRHITextureSamplerType _sampler_type,
+        RedRHITextureAddressType _address_type,
+        int32_t _width,
+        int32_t _height,
+        int32_t _mip_levels
     ) = 0;
 };

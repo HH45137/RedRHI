@@ -1,8 +1,22 @@
 ﻿#include "RedOpenGLDevice.h"
 
+#include <iostream>
 
-RedRHIDevice *RedOpenGLDevice::Init(void *window_handle) {
-    return this;
+#include "glad/glad.h"
+#include "SDL3/SDL_video.h"
+
+
+bool RedOpenGLDevice::Init() {
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+
+    std::cout << "The OpenGL backend has been initialized." << std::endl;
+    return true;
+}
+
+void RedOpenGLDevice::Destroy() {
+    std::cout << "The OpenGL backend has been destroyed." << std::endl;
 }
 
 RedRHIAdapterInfo *RedOpenGLDevice::GetAdapterInfo() {
@@ -20,17 +34,17 @@ RedRHIAdapterInfo *RedOpenGLDevice::GetAdapterInfo() {
 }
 
 RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
-    RedRHIBufferUsage usage,
-    RedRHIMemoryType memory_type,
-    int32_t size,
-    int32_t stride
+    RedRHIBufferUsage _usage,
+    RedRHIMemoryType _memory_type,
+    int32_t _size,
+    int32_t _stride
 ) {
     auto buffer = new RedRHIBuffer{};
 
-    buffer->usage = usage;
-    buffer->memory_type = memory_type;
-    buffer->size = size;
-    buffer->stride = stride;
+    buffer->usage = _usage;
+    buffer->memory_type = _memory_type;
+    buffer->size = _size;
+    buffer->stride = _stride;
 
     {
         buffer->is_destroy = false;
@@ -44,20 +58,20 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
 }
 
 RedRHITexture *RedOpenGLDevice::CreateTexture(
-    RedRHITextureFormat usage,
-    RedRHITextureSamplerType sampler_type,
-    RedRHITextureAddressType address_type,
-    int32_t width,
-    int32_t height,
-    int32_t mip_levels
+    RedRHITextureFormat _usage,
+    RedRHITextureSamplerType _sampler_type,
+    RedRHITextureAddressType _address_type,
+    int32_t _width,
+    int32_t _height,
+    int32_t _mip_levels
 ) {
     auto texture = new RedRHITexture{};
 
-    texture->usage = usage;
-    texture->address_type = address_type;
-    texture->width = width;
-    texture->height = height;
-    texture->mip_levels = mip_levels;
+    texture->usage = _usage;
+    texture->address_type = _address_type;
+    texture->width = _width;
+    texture->height = _height;
+    texture->mip_levels = _mip_levels;
 
     {
         texture->is_destroy = false;

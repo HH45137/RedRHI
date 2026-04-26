@@ -1,25 +1,53 @@
 ﻿#include <iostream>
+#include <SDL3/SDL.h>
 #include "RedRHI/RedRHI.h"
+#include "RedRHI/OpenGL/glad/glad.h"
 
 int main() {
-    RedRHIDevice *device = new RedOpenGLDevice();
+    SDL_Init(SDL_INIT_VIDEO);
 
-    auto device_rhi = device->Init(0);
-    auto adapter_info = device->GetAdapterInfo();
-    auto texture_01 = device->CreateTexture(
-        RED_RHI_TEXTURE_FORMAT_RGB_8,
-        RED_RHI_TEXTURE_SAMPLER_TYPE_LINEAR,
-        RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
-        512,
-        512,
-        4
-    );
-    auto buffer_01 = device->CreateBuffer(
-        RED_RHI_BUFFER_USAGE_VERTEX,
-        RED_RHI_MEMORY_TYPE_DEVICE,
-        1024,
-        8
-    );
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+    SDL_Window *window = SDL_CreateWindow(
+        "RHI Renderer Window",
+        1920,
+        1080,
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
+    );
+    if (!window) {
+        SDL_Quit();
+        throw std::runtime_error("Failed to create window.");
+    }
+
+    SDL_GLContext opengl_context = SDL_GL_CreateContext(window);
+    if (!opengl_context) {
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        throw std::runtime_error("Failed to create OpenGL context.");
+    }
+
+    RedRHIDevice *rhi_device = new RedOpenGLDevice();
+    rhi_device->Init();
+
+    bool running = true;
+    while (running) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_EVENT_QUIT) running = false;
+        }
+
+        // // RHI 渲染
+        glClearColor(0.1, 0.2, 0.3, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    rhi_device->Destroy();
+
+    SDL_Quit();
     return 0;
 }

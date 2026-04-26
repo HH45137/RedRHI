@@ -25,6 +25,9 @@ set(RHI_SRC
         RedRHI/OpenGL/RedOpenGLDevice.h
         RedRHI/OpenGL/RedOpenGL.h
         RedRHI/RedRHIUtility.h
+        RedRHI/OpenGL/glad/glad.c
+        RedRHI/OpenGL/glad/glad.h
+        RedRHI/OpenGL/glad/khrplatform.h
 )
 
 add_executable(RedRHI main.cpp ${RHI_SRC})
