@@ -1,4 +1,5 @@
 ﻿#include "RedOpenGLDevice.h"
+#include "RedOpenGLBuffer.h"
 
 #include <iostream>
 
@@ -50,20 +51,25 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
     RedRHIBufferUsage _usage,
     RedRHIMemoryType _memory_type,
     size_t _size,
-    int32_t _stride,
     void *_data
 ) {
-    auto buffer = new RedRHIBuffer{};
+    auto buffer = new RedOpenGLBuffer{};
 
     buffer->usage = _usage;
     buffer->memory_type = _memory_type;
     buffer->size = _size;
 
+    glGenBuffers(1, &buffer->gl_buffer);
+
     switch (_usage) {
         case RED_RHI_BUFFER_USAGE_VERTEX:
+            glBindBuffer(GL_ARRAY_BUFFER, buffer->gl_buffer);
+            glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
             break;
 
         case RED_RHI_BUFFER_USAGE_INDEX:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->gl_buffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
             break;
 
         case RED_RHI_BUFFER_USAGE_UNIFORM:

@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <SDL3/SDL.h>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <OBJ_Loader.h>
 
@@ -37,36 +38,51 @@ int main() {
 
     // Ready
     RedRHIBuffer *vertex_buffer = nullptr;
+    RedRHIBuffer *index_buffer = nullptr;
     RedRHITexture *texture = nullptr;
     {
-        std::vector<float> vertices = {
+        const std::string ASSETS_ROOT = "../Assets/";
 
+        /*objl::Loader loader;
+        loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
+        std::cout << loader.LoadedMeshes[0].MeshName << std::endl;*/
+
+        int32_t width, height, channels;
+        unsigned char *image_data = stbi_load(
+            (ASSETS_ROOT + "6Hz/6Hz.png").c_str(),
+            &width, &height, &channels, 0
+        );
+
+        std::vector<float> vertices = {
         };
 
-        {
-            const std::string ASSETS_ROOT = "../assets/";
-
-            objl::Loader loader;
-            loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
-            std::cout << loader.LoadedMeshes[0].MeshName << std::endl;
-        }
+        std::vector<float> indices = {
+        };
 
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
             RED_RHI_MEMORY_TYPE_DEVICE,
             vertices.size(),
-            3,
             vertices.data()
+        );
+
+        index_buffer = rhi_device->CreateBuffer(
+            RED_RHI_BUFFER_USAGE_INDEX,
+            RED_RHI_MEMORY_TYPE_DEVICE,
+            indices.size(),
+            indices.data()
         );
 
         texture = rhi_device->CreateTexture(
             RED_RHI_TEXTURE_FORMAT_RGB_8,
             RED_RHI_TEXTURE_SAMPLER_TYPE_LINEAR,
             RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
-            1024,
-            1024,
+            width,
+            height,
             8
         );
+
+        stbi_image_free(image_data);
     }
 
     bool running = true;

@@ -15,7 +15,6 @@ public:
         RedRHIBufferUsage _usage,
         RedRHIMemoryType _memory_type,
         size_t _size,
-        int32_t _stride,
         void *_data
     ) override;
 
