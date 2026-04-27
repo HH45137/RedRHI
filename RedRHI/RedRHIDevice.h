@@ -46,6 +46,8 @@ public:
         void *_data
     ) = 0;
 
+    virtual void DestroyBuffer(RedRHIBuffer *_buffer) = 0;
+
     virtual RedRHITexture *CreateTexture(
         RedRHITextureFormat _usage,
         RedRHITextureSamplerType _sampler_type,

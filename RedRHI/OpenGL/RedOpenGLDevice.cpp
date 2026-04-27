@@ -90,6 +90,11 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
     return buffer;
 }
 
+void RedOpenGLDevice::DestroyBuffer(RedRHIBuffer *_buffer) {
+    glDeleteBuffers(1, &((RedOpenGLBuffer *) _buffer)->gl_buffer);
+    resource_poll.SafeRelease(_buffer);
+}
+
 RedRHITexture *RedOpenGLDevice::CreateTexture(
     RedRHITextureFormat _usage,
     RedRHITextureSamplerType _sampler_type,

@@ -18,7 +18,7 @@ public:
         return _resource;
     }
 
-    RedRHIResource *GetByUUID(const std::string& _uuid) {
+    RedRHIResource *GetByUUID(const std::string &_uuid) {
         std::lock_guard lock(this->mutex);
 
         auto item = resources.find(_uuid);
@@ -35,7 +35,7 @@ public:
     void SafeRelease(RedRHIResource *_resource) {
         std::lock_guard lock(this->mutex);
 
-        if (_resource->ref_count == 0) {
+        if (--_resource->ref_count == 0) {
             resources.erase(_resource->uuid);
             delete _resource;
         }
@@ -49,17 +49,30 @@ public:
     }
 
     void SafeReleaseAll() {
-        for (const auto &item: resources) {
-            SafeRelease(item.second);
+        std::lock_guard lock(this->mutex);
+
+        while (!resources.empty()) {
+            auto item = resources.begin();
+            auto resource = item->second;
+
+            if (--resource->ref_count == 0) {
+                delete resource;
+            }
+
+            resources.erase(item);
         }
-        resources.clear();
     }
 
     void ForceReleaseAll() {
-        for (const auto &item: resources) {
-            SafeRelease(item.second);
+        std::lock_guard lock(this->mutex);
+
+        while (!resources.empty()) {
+            auto item = resources.begin();
+            auto resource = item->second;
+
+            delete resource;
+            resources.erase(item);
         }
-        resources.clear();
     }
 
 private:

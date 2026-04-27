@@ -100,6 +100,8 @@ int main() {
         SDL_GL_SwapWindow(window);
     }
 
+    rhi_device->DestroyBuffer(vertex_buffer);
+    rhi_device->DestroyBuffer(index_buffer);
     rhi_device->Destroy();
 
     SDL_Quit();

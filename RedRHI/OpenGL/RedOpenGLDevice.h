@@ -18,6 +18,8 @@ public:
         void *_data
     ) override;
 
+    void DestroyBuffer(RedRHIBuffer *_buffer) override;
+
     RedRHITexture *CreateTexture(
         RedRHITextureFormat _usage,
         RedRHITextureSamplerType _sampler_type,
