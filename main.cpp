@@ -1,5 +1,8 @@
 ﻿#include <iostream>
 #include <SDL3/SDL.h>
+#include <stb_image.h>
+#include <OBJ_Loader.h>
+
 #include "RedRHI/RedRHI.h"
 
 int main() {
@@ -39,6 +42,14 @@ int main() {
         std::vector<float> vertices = {
 
         };
+
+        {
+            const std::string ASSETS_ROOT = "../assets/";
+
+            objl::Loader loader;
+            loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
+            std::cout << loader.LoadedMeshes[0].MeshName << std::endl;
+        }
 
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
