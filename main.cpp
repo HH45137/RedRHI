@@ -54,9 +54,15 @@ int main() {
         );
 
         std::vector<float> vertices = {
+            0.5f, 0.5f, 0.0f, // top right
+            0.5f, -0.5f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, // bottom left
+            -0.5f, 0.5f, 0.0f // top left
         };
 
         std::vector<float> indices = {
+            0, 1, 3, // first Triangle
+            1, 2, 3 // second Triangle
         };
 
         vertex_buffer = rhi_device->CreateBuffer(
@@ -94,7 +100,8 @@ int main() {
 
         // Draw
         {
-            rhi_device->DrawFrame();
+            rhi_device->ClearColor(0.2, 0.4, 0.6);
+            rhi_device->ClearFrameBuffer();
         }
 
         SDL_GL_SwapWindow(window);

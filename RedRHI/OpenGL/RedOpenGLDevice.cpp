@@ -65,11 +65,13 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
         case RED_RHI_BUFFER_USAGE_VERTEX:
             glBindBuffer(GL_ARRAY_BUFFER, buffer->gl_buffer);
             glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             break;
 
         case RED_RHI_BUFFER_USAGE_INDEX:
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->gl_buffer);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             break;
 
         case RED_RHI_BUFFER_USAGE_UNIFORM:
@@ -116,7 +118,10 @@ RedRHITexture *RedOpenGLDevice::CreateTexture(
     return texture;
 }
 
-void RedOpenGLDevice::DrawFrame() {
-    glClearColor(0.8, 0.0, 0.6, 1.0);
+void RedOpenGLDevice::ClearColor(float _red, float _green, float _blue) {
+    glClearColor(_red, _green, _blue, 1.0);
+}
+
+void RedOpenGLDevice::ClearFrameBuffer() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

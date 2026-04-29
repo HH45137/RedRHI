@@ -57,7 +57,9 @@ public:
         int32_t _mip_levels
     ) = 0;
 
-    virtual void DrawFrame() = 0;
+    virtual void ClearColor(float _red, float _green, float _blue) = 0;
+
+    virtual void ClearFrameBuffer() = 0;
 
 protected:
     RedRHIResourcePool resource_poll;

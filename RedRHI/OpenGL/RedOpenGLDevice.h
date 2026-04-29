@@ -29,7 +29,10 @@ public:
         int32_t _mip_levels
     ) override;
 
-    void DrawFrame() override;
+    void ClearColor(float _red, float _green, float _blue) override;
+
+    void ClearFrameBuffer() override;
 
 private:
+    unsigned int gl_vao{};
 };
