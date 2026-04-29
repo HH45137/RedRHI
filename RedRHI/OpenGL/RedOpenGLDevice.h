@@ -29,6 +29,12 @@ public:
         int32_t _mip_levels
     ) override;
 
+    RedRHIShader *CreateShader(std::string &_src, RedRHIShaderStage _stage) override;
+
+    RedRHIShader *CreateShader(RedRHIShader *_vertex_shader, RedRHIShader *_fragment_shader) override;
+
+    void DestroyShader(RedRHIShader *_shader) override;
+
     void ClearColor(float _red, float _green, float _blue) override;
 
     void ClearFrameBuffer() override;

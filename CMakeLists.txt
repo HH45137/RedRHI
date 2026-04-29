@@ -29,6 +29,7 @@ set(RHI_SRC
         RedRHI/OpenGL/RedOpenGLDevice.h
         RedRHI/OpenGL/RedOpenGL.h
         RedRHI/OpenGL/RedOpenGLBuffer.h
+        RedRHI/OpenGL/RedOpenGLShader.h
 )
 
 add_executable(RedRHI main.cpp ${RHI_SRC})

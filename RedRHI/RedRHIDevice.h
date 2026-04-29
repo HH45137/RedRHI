@@ -4,6 +4,7 @@
 
 #include "RedRHIBuffer.h"
 #include "RedRHIResourcePool.h"
+#include "RedRHIShader.h"
 
 
 enum RedRHIFeature {
@@ -56,6 +57,12 @@ public:
         int32_t _height,
         int32_t _mip_levels
     ) = 0;
+
+    virtual RedRHIShader *CreateShader(std::string &_src, RedRHIShaderStage _stage) = 0;
+
+    virtual RedRHIShader *CreateShader(RedRHIShader *_vertex_shader, RedRHIShader *_fragment_shader) = 0;
+
+    virtual void DestroyShader(RedRHIShader *_shader) = 0;
 
     virtual void ClearColor(float _red, float _green, float _blue) = 0;
 

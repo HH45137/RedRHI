@@ -40,18 +40,13 @@ int main() {
     RedRHIBuffer *vertex_buffer = nullptr;
     RedRHIBuffer *index_buffer = nullptr;
     RedRHITexture *texture = nullptr;
+    RedRHIShader *shader_program = nullptr;
     {
         const std::string ASSETS_ROOT = "../Assets/";
 
         /*objl::Loader loader;
         loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
         std::cout << loader.LoadedMeshes[0].MeshName << std::endl;*/
-
-        int32_t width, height, channels;
-        unsigned char *image_data = stbi_load(
-            (ASSETS_ROOT + "6Hz/6Hz.png").c_str(),
-            &width, &height, &channels, 0
-        );
 
         std::vector<float> vertices = {
             0.5f, 0.5f, 0.0f, // top right
@@ -79,6 +74,11 @@ int main() {
             indices.data()
         );
 
+        int32_t width, height, channels;
+        unsigned char *image_data = stbi_load(
+            (ASSETS_ROOT + "6Hz/6Hz.png").c_str(),
+            &width, &height, &channels, 0
+        );
         texture = rhi_device->CreateTexture(
             RED_RHI_TEXTURE_FORMAT_RGB_8,
             RED_RHI_TEXTURE_SAMPLER_TYPE_LINEAR,
@@ -87,8 +87,23 @@ int main() {
             height,
             8
         );
-
         stbi_image_free(image_data);
+
+        std::string vertex_shader_src = "#version 460 core\n"
+                "layout (location = 0) in vec3 aPos;\n"
+                "void main()\n"
+                "{\n"
+                "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                "}\0";
+        std::string fragment_shader_src = "#version 460 core\n"
+                "out vec4 FragColor;\n"
+                "void main()\n"
+                "{\n"
+                "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                "}\n\0";
+        RedRHIShader *vertex_shader = rhi_device->CreateShader(vertex_shader_src, RED_RHI_SHADER_STAGE_VERTEX);
+        RedRHIShader *fragment_shader = rhi_device->CreateShader(fragment_shader_src, RED_RHI_SHADER_STAGE_FRAGMENT);
+        shader_program = rhi_device->CreateShader(vertex_shader, fragment_shader);
     }
 
     bool running = true;
@@ -107,6 +122,7 @@ int main() {
         SDL_GL_SwapWindow(window);
     }
 
+    rhi_device->DestroyShader(shader_program);
     rhi_device->DestroyBuffer(vertex_buffer);
     rhi_device->DestroyBuffer(index_buffer);
     rhi_device->Destroy();

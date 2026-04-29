@@ -118,6 +118,82 @@ RedRHITexture *RedOpenGLDevice::CreateTexture(
     return texture;
 }
 
+RedRHIShader *RedOpenGLDevice::CreateShader(std::string &_src, RedRHIShaderStage _stage) {
+    auto shader = new RedOpenGLShader();
+
+    shader->stage = _stage;
+    shader->src = _src;
+
+    unsigned int temp_shader = 0;
+    switch (_stage) {
+        case RED_RHI_SHADER_STAGE_VERTEX:
+            temp_shader = glCreateShader(GL_VERTEX_SHADER);
+            break;
+
+        case RED_RHI_SHADER_STAGE_FRAGMENT:
+            temp_shader = glCreateShader(GL_FRAGMENT_SHADER);
+            break;
+
+        case RED_RHI_SHADER_STAGE_COMPUTE:
+            temp_shader = glCreateShader(GL_COMPUTE_SHADER);
+            break;
+
+        default:
+            break;
+    }
+
+    const char *temp_shader_source = shader->src.c_str();
+    glShaderSource(temp_shader, 1, &temp_shader_source, nullptr);
+    glCompileShader(temp_shader);
+
+    int success;
+    char info_log[512];
+    glGetShaderiv(temp_shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(temp_shader, 512, nullptr, info_log);
+        std::cout << "Error compile shader" << info_log << std::endl;
+    }
+
+    shader->gl_shader = temp_shader;
+
+    shader->is_final_program = false;
+
+    return shader;
+}
+
+RedRHIShader *RedOpenGLDevice::CreateShader(RedRHIShader *_vertex_shader, RedRHIShader *_fragment_shader) {
+    auto shader = new RedOpenGLShader();
+
+    shader->gl_shader = glCreateProgram();
+
+    glAttachShader(shader->gl_shader, ((RedOpenGLShader *) _vertex_shader)->gl_shader);
+    glAttachShader(shader->gl_shader, ((RedOpenGLShader *) _fragment_shader)->gl_shader);
+
+    glLinkProgram(shader->gl_shader);
+
+    int success;
+    char info_log[512];
+    glGetProgramiv(shader->gl_shader, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shader->gl_shader, 512, nullptr, info_log);
+        std::cout << "Error linking program" << info_log << std::endl;
+    }
+
+    DestroyShader(_vertex_shader);
+    DestroyShader(_fragment_shader);
+
+    shader->is_final_program = true;
+
+    resource_poll.Register(shader);
+
+    return shader;
+}
+
+void RedOpenGLDevice::DestroyShader(RedRHIShader *_shader) {
+    glDeleteShader(((RedOpenGLShader *) _shader)->gl_shader);
+    resource_poll.SafeRelease(_shader);
+}
+
 void RedOpenGLDevice::ClearColor(float _red, float _green, float _blue) {
     glClearColor(_red, _green, _blue, 1.0);
 }
