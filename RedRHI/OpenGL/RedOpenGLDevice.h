@@ -49,6 +49,8 @@ public:
 
     void ClearFrameBuffer() override;
 
+    void Draw(int32_t _element_count) override;
+
 private:
     RedOpenGLPipeline *bound_pipeline{};
 

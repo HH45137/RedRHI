@@ -77,6 +77,8 @@ public:
 
     virtual void ClearFrameBuffer() = 0;
 
+    virtual void Draw(int32_t _element_count) = 0;
+
 protected:
     RedRHIResourcePool resource_poll;
 };

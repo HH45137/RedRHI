@@ -149,7 +149,7 @@ int main() {
             rhi_device->ClearFrameBuffer();
 
             rhi_device->BindPipeline(pipeline);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            rhi_device->Draw(6);
             rhi_device->BindPipeline(nullptr);
         }
 

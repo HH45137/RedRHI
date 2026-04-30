@@ -343,6 +343,21 @@ void RedOpenGLDevice::ClearFrameBuffer() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void RedOpenGLDevice::Draw(int32_t _element_count) {
+    GLenum gl_mode{};
+
+    switch (bound_pipeline->desc.vertex_input_desc.topology) {
+        case RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
+            gl_mode = GL_TRIANGLES;
+            break;
+
+        default:
+            throw std::runtime_error("Undefined topology");
+    }
+
+    glDrawElements(gl_mode, _element_count, GL_UNSIGNED_INT, 0);
+}
+
 GLenum RedOpenGLDevice::MapFormatType(RedRHIFormatType _type) {
     GLenum gl_type{};
 
