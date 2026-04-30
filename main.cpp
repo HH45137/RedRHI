@@ -126,7 +126,6 @@ int main() {
             }
         };
         pipeline = rhi_device->CreatePipeline(pipeline_desc);
-        rhi_device->BindPipeline(pipeline);
     }
 
     bool running = true;
@@ -142,6 +141,8 @@ int main() {
             rhi_device->ClearFrameBuffer();
 
             rhi_device->BindPipeline(pipeline);
+
+            rhi_device->BindPipeline(nullptr);
         }
 
         SDL_GL_SwapWindow(window);

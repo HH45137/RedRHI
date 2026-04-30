@@ -227,6 +227,11 @@ void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
 }
 
 void RedOpenGLDevice::BindPipeline(RedRHIPipeline *_pipeline) {
+    if (_pipeline == nullptr) {
+        glBindVertexArray(0);
+        return;
+    }
+
     auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
     auto desc = pipeline->desc;
     auto shader = static_cast<RedOpenGLShader *>(desc.shader);
