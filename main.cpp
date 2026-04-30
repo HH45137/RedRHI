@@ -41,6 +41,7 @@ int main() {
     RedRHIBuffer *index_buffer = nullptr;
     RedRHITexture *texture = nullptr;
     RedRHIShader *shader_program = nullptr;
+    RedRHIPipeline *pipeline = nullptr;
     {
         const std::string ASSETS_ROOT = "../Assets/";
 
@@ -80,7 +81,7 @@ int main() {
             &width, &height, &channels, 0
         );
         texture = rhi_device->CreateTexture(
-            RED_RHI_TEXTURE_FORMAT_RGB_8,
+            RED_RHI_TEXTURE_FORMAT_R8G8B8,
             RED_RHI_TEXTURE_SAMPLER_TYPE_LINEAR,
             RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
             width,
@@ -104,6 +105,27 @@ int main() {
         RedRHIShader *vertex_shader = rhi_device->CreateShader(vertex_shader_src, RED_RHI_SHADER_STAGE_VERTEX);
         RedRHIShader *fragment_shader = rhi_device->CreateShader(fragment_shader_src, RED_RHI_SHADER_STAGE_FRAGMENT);
         shader_program = rhi_device->CreateShader(vertex_shader, fragment_shader);
+
+        RedRHIPipelineDesc pipeline_desc{
+            .vertex_input_desc = RedRHIVertexInputDesc{
+                .attributes = {
+                    RedRHIVertexAttributeDesc{
+                        .index = 0,
+                        .size = 3,
+                        .type = RED_RHI_FORMAT_TYPE_FLOAT,
+                        .normalized = true,
+                        .stride = 3 * sizeof(float),
+                        .offset = 0,
+                    }
+                },
+                .topology = RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
+            },
+            .rasterizer_desc = RedRHIRasterizerDesc{
+                .cull_mode = RED_RHI_CULL_MODE_BACK
+            }
+        };
+        pipeline = rhi_device->CreatePipeline(pipeline_desc);
+        rhi_device->BindPipeline(pipeline);
     }
 
     bool running = true;
@@ -122,6 +144,7 @@ int main() {
         SDL_GL_SwapWindow(window);
     }
 
+    rhi_device->DestroyPipeline(pipeline);
     rhi_device->DestroyShader(shader_program);
     rhi_device->DestroyBuffer(vertex_buffer);
     rhi_device->DestroyBuffer(index_buffer);

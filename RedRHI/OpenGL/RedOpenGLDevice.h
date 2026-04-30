@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../RedRHI.h"
+#include "glad/glad.h"
 
 
 class RedOpenGLDevice : public RedRHIDevice {
@@ -35,10 +36,16 @@ public:
 
     void DestroyShader(RedRHIShader *_shader) override;
 
+    RedRHIPipeline *CreatePipeline(RedRHIPipelineDesc _desc) override;
+
+    void DestroyPipeline(RedRHIPipeline *_pipeline) override;
+
+    void BindPipeline(RedRHIPipeline *_pipeline) override;
+
     void ClearColor(float _red, float _green, float _blue) override;
 
     void ClearFrameBuffer() override;
 
 private:
-    unsigned int gl_vao{};
+    static GLenum MapFormatType(RedRHIFormatType _type);
 };

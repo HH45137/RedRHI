@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include "glad/glad.h"
 #include "SDL3/SDL_video.h"
 
 
@@ -93,7 +92,7 @@ RedRHIBuffer *RedOpenGLDevice::CreateBuffer(
 }
 
 void RedOpenGLDevice::DestroyBuffer(RedRHIBuffer *_buffer) {
-    glDeleteBuffers(1, &((RedOpenGLBuffer *) _buffer)->gl_buffer);
+    glDeleteBuffers(1, &static_cast<RedOpenGLBuffer *>(_buffer)->gl_buffer);
     resource_poll.SafeRelease(_buffer);
 }
 
@@ -190,8 +189,37 @@ RedRHIShader *RedOpenGLDevice::CreateShader(RedRHIShader *_vertex_shader, RedRHI
 }
 
 void RedOpenGLDevice::DestroyShader(RedRHIShader *_shader) {
-    glDeleteShader(((RedOpenGLShader *) _shader)->gl_shader);
+    glDeleteShader(static_cast<RedOpenGLShader *>(_shader)->gl_shader);
     resource_poll.SafeRelease(_shader);
+}
+
+RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
+    auto pipeline = new RedOpenGLPipeline();
+
+    pipeline->desc = _desc;
+
+    glGenVertexArrays(1, &pipeline->gl_vao);
+    glBindVertexArray(pipeline->gl_vao);
+    for (auto &item: _desc.vertex_input_desc.attributes) {
+        glEnableVertexAttribArray(item.index);
+        GLenum gl_type = MapFormatType(item.type);
+        glVertexAttribPointer(item.index, item.size, gl_type, item.normalized, item.stride, (void *) item.offset);
+    }
+    glBindVertexArray(0);
+
+    resource_poll.Register(pipeline);
+
+    return pipeline;
+}
+
+void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
+    auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
+    glDeleteVertexArrays(1, &pipeline->gl_vao);
+    resource_poll.SafeRelease(_pipeline);
+}
+
+void RedOpenGLDevice::BindPipeline(RedRHIPipeline *_pipeline) {
+    glBindVertexArray(static_cast<RedOpenGLPipeline *>(_pipeline)->gl_vao);
 }
 
 void RedOpenGLDevice::ClearColor(float _red, float _green, float _blue) {
@@ -200,4 +228,40 @@ void RedOpenGLDevice::ClearColor(float _red, float _green, float _blue) {
 
 void RedOpenGLDevice::ClearFrameBuffer() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+GLenum RedOpenGLDevice::MapFormatType(RedRHIFormatType _type) {
+    GLenum gl_type{};
+
+    switch (_type) {
+        case RED_RHI_FORMAT_TYPE_FLOAT:
+            gl_type = GL_FLOAT;
+            break;
+
+        case RED_RHI_FORMAT_TYPE_DOUBLE:
+            gl_type = GL_DOUBLE;
+            break;
+
+        case RED_RHI_FORMAT_TYPE_INT32:
+            gl_type = GL_INT;
+            break;
+
+        case RED_RHI_FORMAT_TYPE_INT16:
+            gl_type = GL_SHORT;
+            break;
+
+        case RED_RHI_FORMAT_TYPE_UINT32:
+            gl_type = GL_UNSIGNED_INT;
+            break;
+
+        case RED_RHI_FORMAT_TYPE_UINT16:
+            gl_type = GL_UNSIGNED_SHORT;
+            break;
+
+        default:
+            throw std::runtime_error("Unknown format type");
+            break;
+    }
+
+    return gl_type;
 }

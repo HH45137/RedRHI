@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "RedRHIBuffer.h"
+#include "RedRHIPipeline.h"
 #include "RedRHIResourcePool.h"
 #include "RedRHIShader.h"
 
@@ -63,6 +64,12 @@ public:
     virtual RedRHIShader *CreateShader(RedRHIShader *_vertex_shader, RedRHIShader *_fragment_shader) = 0;
 
     virtual void DestroyShader(RedRHIShader *_shader) = 0;
+
+    virtual RedRHIPipeline *CreatePipeline(RedRHIPipelineDesc _desc) = 0;
+
+    virtual void DestroyPipeline(RedRHIPipeline *_pipeline) = 0;
+
+    virtual void BindPipeline(RedRHIPipeline *_pipeline) = 0;
 
     virtual void ClearColor(float _red, float _green, float _blue) = 0;
 
