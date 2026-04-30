@@ -227,7 +227,52 @@ void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
 }
 
 void RedOpenGLDevice::BindPipeline(RedRHIPipeline *_pipeline) {
-    glBindVertexArray(static_cast<RedOpenGLPipeline *>(_pipeline)->gl_vao);
+    auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
+    auto desc = pipeline->desc;
+    auto shader = static_cast<RedOpenGLShader *>(desc.shader);
+
+    glUseProgram(shader->gl_shader);
+
+    glBindVertexArray(pipeline->gl_vao);
+
+    switch (desc.rasterizer_desc.cull_mode) {
+        case RED_RHI_CULL_MODE_NONE:
+            glDisable(GL_CULL_FACE);
+            break;
+
+        case RED_RHI_CULL_MODE_FRONT:
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+            break;
+
+        case RED_RHI_CULL_MODE_BACK:
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            break;
+
+        default:
+            throw std::runtime_error("Undefined cull mode");
+    }
+
+    if (desc.depth_stencil_desc.depth_test) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(desc.depth_stencil_desc.depth_write ? GL_TRUE : GL_FALSE);
+        glDepthFunc(MapCompareOp(desc.depth_stencil_desc.compare_op));
+    } else {
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    if (desc.blend_desc.blend_enable) {
+        glEnable(GL_BLEND);
+        glBlendFuncSeparate(
+            MapBlendFactor(desc.blend_desc.src_color_blend_factor),
+            MapBlendFactor(desc.blend_desc.dst_color_blend_factor),
+            MapBlendFactor(desc.blend_desc.src_alpha_blend_factor),
+            MapBlendFactor(desc.blend_desc.dst_color_blend_factor)
+        );
+    } else {
+        glDisable(GL_BLEND);
+    }
 }
 
 void RedOpenGLDevice::ClearColor(float _red, float _green, float _blue) {
@@ -268,8 +313,70 @@ GLenum RedOpenGLDevice::MapFormatType(RedRHIFormatType _type) {
 
         default:
             throw std::runtime_error("Unknown format type");
-            break;
     }
 
     return gl_type;
+}
+
+GLenum RedOpenGLDevice::MapCompareOp(RedRHICompareOp _compare_op) {
+    GLenum op_type{};
+
+    switch (_compare_op) {
+        case RED_RHI_COMPARE_OP_NEVER:
+            op_type = GL_NEVER;
+            break;
+
+        case RED_RHI_COMPARE_OP_LESS:
+            op_type = GL_LESS;
+            break;
+
+        case RED_RHI_COMPARE_OP_EQUAL:
+            op_type = GL_EQUAL;
+            break;
+
+        case RED_RHI_COMPARE_OP_GREATER:
+            op_type = GL_GREATER;
+            break;
+
+        case RED_RHI_COMPARE_OP_NOT_EQUAL:
+            op_type = GL_NOTEQUAL;
+            break;
+
+        case RED_RHI_COMPARE_OP_ALWAYS:
+            op_type = GL_ALWAYS;
+            break;
+
+        default:
+            throw std::runtime_error("Unknown compare operate");
+    }
+
+    return op_type;
+}
+
+GLenum RedOpenGLDevice::MapBlendFactor(RedRHIBlendFactor _blend_factor) {
+    GLenum blend_factor{};
+
+    switch (_blend_factor) {
+        case RED_RHI_BLEND_FACTOR_ZERO:
+            blend_factor = GL_ZERO;
+            break;
+
+        case RED_RHI_BLEND_FACTOR_ONE:
+            blend_factor = GL_ONE;
+
+            break;
+
+        case RED_RHI_BLEND_FACTOR_SRC_ALPHA:
+            blend_factor = GL_SRC_ALPHA;
+            break;
+
+        case RED_RHI_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
+            blend_factor = GL_ONE_MINUS_SRC_ALPHA;
+            break;
+
+        default:
+            throw std::runtime_error("Unknown blend factor");
+    }
+
+    return blend_factor;
 }

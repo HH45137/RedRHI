@@ -48,4 +48,8 @@ public:
 
 private:
     static GLenum MapFormatType(RedRHIFormatType _type);
+
+    static GLenum MapCompareOp(RedRHICompareOp _compare_op);
+
+    static GLenum MapBlendFactor(RedRHIBlendFactor _blend_factor);
 };
