@@ -203,7 +203,14 @@ RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
     for (auto &item: _desc.vertex_input_desc.attributes) {
         glEnableVertexAttribArray(item.index);
         GLenum gl_type = MapFormatType(item.type);
-        glVertexAttribPointer(item.index, item.size, gl_type, item.normalized, item.stride, reinterpret_cast<void *>(item.offset));
+        glVertexAttribPointer(
+            item.index,
+            item.size,
+            gl_type,
+            item.normalized,
+            item.stride,
+            reinterpret_cast<void *>(item.offset)
+        );
     }
     glBindVertexArray(0);
 
@@ -214,6 +221,7 @@ RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
 
 void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
     auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
+    DestroyShader(pipeline->desc.shader);
     glDeleteVertexArrays(1, &pipeline->gl_vao);
     resource_poll.SafeRelease(_pipeline);
 }

@@ -107,6 +107,7 @@ int main() {
         shader_program = rhi_device->CreateShader(vertex_shader, fragment_shader);
 
         RedRHIPipelineDesc pipeline_desc{
+            .shader = shader_program,
             .vertex_input_desc = RedRHIVertexInputDesc{
                 .attributes = {
                     RedRHIVertexAttributeDesc{
@@ -139,15 +140,16 @@ int main() {
         {
             rhi_device->ClearColor(0.2, 0.4, 0.6);
             rhi_device->ClearFrameBuffer();
+
+            rhi_device->BindPipeline(pipeline);
         }
 
         SDL_GL_SwapWindow(window);
     }
 
-    rhi_device->DestroyPipeline(pipeline);
-    rhi_device->DestroyShader(shader_program);
     rhi_device->DestroyBuffer(vertex_buffer);
     rhi_device->DestroyBuffer(index_buffer);
+    rhi_device->DestroyPipeline(pipeline);
     rhi_device->Destroy();
 
     SDL_Quit();

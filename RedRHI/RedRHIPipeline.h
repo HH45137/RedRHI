@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "RedRHIBuffer.h"
+#include "RedRHIShader.h"
 
 
 enum RedRHIPrimitiveTopology {
@@ -79,6 +80,7 @@ struct RedRHIBlendDesc {
 };
 
 struct RedRHIPipelineDesc {
+    RedRHIShader *shader{};
     RedRHIVertexInputDesc vertex_input_desc;
     RedRHIRasterizerDesc rasterizer_desc;
     RedRHIDepthStencilDesc depth_stencil_desc;
