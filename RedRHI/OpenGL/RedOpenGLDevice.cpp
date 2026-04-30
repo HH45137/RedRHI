@@ -96,6 +96,46 @@ void RedOpenGLDevice::DestroyBuffer(RedRHIBuffer *_buffer) {
     resource_poll.SafeRelease(_buffer);
 }
 
+void RedOpenGLDevice::BindBuffer(RedRHIBuffer *_buffer) {
+    auto buffer = static_cast<RedOpenGLBuffer *>(_buffer);
+
+    switch (buffer->usage) {
+        case RED_RHI_BUFFER_USAGE_VERTEX: {
+            if (!bound_pipeline) { break; }
+            auto &attrs = bound_pipeline->desc.vertex_input_desc.attributes;
+
+            for (auto &attr: attrs) {
+                if (attr.size > 0) {
+                    glBindVertexBuffer(
+                        attr.index,
+                        buffer->gl_buffer,
+                        0,
+                        attr.stride
+                    );
+                    break;
+                }
+            }
+            break;
+        }
+
+        case RED_RHI_BUFFER_USAGE_INDEX:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->gl_buffer);
+            break;
+
+        case RED_RHI_BUFFER_USAGE_UNIFORM:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_STORAGE:
+            break;
+
+        case RED_RHI_BUFFER_USAGE_STAGING:
+            break;
+
+        default:
+            throw std::runtime_error("Invalid buffer usage");
+    }
+}
+
 RedRHITexture *RedOpenGLDevice::CreateTexture(
     RedRHITextureFormat _usage,
     RedRHITextureSamplerType _sampler_type,
@@ -203,14 +243,27 @@ RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
     for (auto &item: _desc.vertex_input_desc.attributes) {
         glEnableVertexAttribArray(item.index);
         GLenum gl_type = MapFormatType(item.type);
-        glVertexAttribPointer(
+        /*glVertexAttribPointer(
             item.index,
             item.size,
             gl_type,
             item.normalized,
             item.stride,
             reinterpret_cast<void *>(item.offset)
+        );*/
+
+        glVertexAttribFormat(
+            item.index,
+            item.size,
+            gl_type,
+            item.normalized,
+            item.offset
         );
+        glVertexAttribBinding(
+            item.index,
+            item.index
+        );
+        glEnableVertexAttribArray(item.index);
     }
     glBindVertexArray(0);
 
@@ -228,9 +281,11 @@ void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
 
 void RedOpenGLDevice::BindPipeline(RedRHIPipeline *_pipeline) {
     if (_pipeline == nullptr) {
+        bound_pipeline = nullptr;
         glBindVertexArray(0);
         return;
     }
+    bound_pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
 
     auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
     auto desc = pipeline->desc;

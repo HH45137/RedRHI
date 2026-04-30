@@ -3,6 +3,7 @@
 #include "../RedRHI.h"
 #include "glad/glad.h"
 
+struct RedOpenGLPipeline;
 
 class RedOpenGLDevice : public RedRHIDevice {
 public:
@@ -20,6 +21,8 @@ public:
     ) override;
 
     void DestroyBuffer(RedRHIBuffer *_buffer) override;
+
+    void BindBuffer(RedRHIBuffer *_buffer) override;
 
     RedRHITexture *CreateTexture(
         RedRHITextureFormat _usage,
@@ -47,6 +50,8 @@ public:
     void ClearFrameBuffer() override;
 
 private:
+    RedOpenGLPipeline *bound_pipeline{};
+
     static GLenum MapFormatType(RedRHIFormatType _type);
 
     static GLenum MapCompareOp(RedRHICompareOp _compare_op);

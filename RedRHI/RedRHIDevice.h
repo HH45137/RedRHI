@@ -50,6 +50,8 @@ public:
 
     virtual void DestroyBuffer(RedRHIBuffer *_buffer) = 0;
 
+    virtual void BindBuffer(RedRHIBuffer *_buffer) = 0;
+
     virtual RedRHITexture *CreateTexture(
         RedRHITextureFormat _usage,
         RedRHITextureSamplerType _sampler_type,

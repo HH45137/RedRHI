@@ -56,22 +56,22 @@ int main() {
             -0.5f, 0.5f, 0.0f // top left
         };
 
-        std::vector<float> indices = {
-            0, 1, 3, // first Triangle
-            1, 2, 3 // second Triangle
+        std::vector<int32_t> indices = {
+            0, 3, 1, // first Triangle
+            1, 3, 2 // second Triangle
         };
 
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
             RED_RHI_MEMORY_TYPE_DEVICE,
-            vertices.size(),
+            vertices.size() * sizeof(float),
             vertices.data()
         );
 
         index_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_INDEX,
             RED_RHI_MEMORY_TYPE_DEVICE,
-            indices.size(),
+            indices.size() * sizeof(uint32_t),
             indices.data()
         );
 
@@ -114,7 +114,7 @@ int main() {
                         .index = 0,
                         .size = 3,
                         .type = RED_RHI_FORMAT_TYPE_FLOAT,
-                        .normalized = true,
+                        .normalized = false,
                         .stride = 3 * sizeof(float),
                         .offset = 0,
                     }
@@ -123,9 +123,17 @@ int main() {
             },
             .rasterizer_desc = RedRHIRasterizerDesc{
                 .cull_mode = RED_RHI_CULL_MODE_BACK
+            },
+            .blend_desc = RedRHIBlendDesc{
+                .blend_enable = false
             }
         };
         pipeline = rhi_device->CreatePipeline(pipeline_desc);
+
+        rhi_device->BindPipeline(pipeline);
+        rhi_device->BindBuffer(vertex_buffer);
+        rhi_device->BindBuffer(index_buffer);
+        rhi_device->BindPipeline(nullptr);
     }
 
     bool running = true;
@@ -141,7 +149,7 @@ int main() {
             rhi_device->ClearFrameBuffer();
 
             rhi_device->BindPipeline(pipeline);
-
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             rhi_device->BindPipeline(nullptr);
         }
 
