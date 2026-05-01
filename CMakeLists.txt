@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 4.2)
+﻿cmake_minimum_required(VERSION 4.1.2)
 project(RedRHI)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -38,4 +38,4 @@ add_executable(RedRHI main.cpp ${RHI_SRC})
 add_definitions(-DUUID_SYSTEM_GENERATOR)
 include_directories(Thirdpart/)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 uuid)

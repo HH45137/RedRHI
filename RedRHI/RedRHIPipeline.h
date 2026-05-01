@@ -55,7 +55,7 @@ struct RedRHIVertexAttributeDesc {
 };
 
 struct RedRHIVertexInputDesc {
-    RedRHIVertexAttributeDesc attributes[8]{};
+    std::vector<RedRHIVertexAttributeDesc> attributes{};
     RedRHIPrimitiveTopology topology = RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 };
 

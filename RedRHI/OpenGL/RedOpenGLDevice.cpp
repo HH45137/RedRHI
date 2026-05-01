@@ -274,7 +274,6 @@ RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
 
 void RedOpenGLDevice::DestroyPipeline(RedRHIPipeline *_pipeline) {
     auto pipeline = static_cast<RedOpenGLPipeline *>(_pipeline);
-    DestroyShader(pipeline->desc.shader);
     glDeleteVertexArrays(1, &pipeline->gl_vao);
     resource_poll.SafeRelease(_pipeline);
 }
