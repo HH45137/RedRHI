@@ -16,8 +16,8 @@ int main() {
 
     SDL_Window *window = SDL_CreateWindow(
         "RHI Renderer Window",
-        1920,
-        1080,
+        800,
+        800,
         SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
     );
     if (!window) {
@@ -37,6 +37,7 @@ int main() {
     auto adapter_info = rhi_device->GetAdapterInfo();
 
     // Ready
+    objl::Mesh obj_mesh{};
     RedRHIBuffer *vertex_buffer = nullptr;
     RedRHIBuffer *index_buffer = nullptr;
     RedRHITexture *texture = nullptr;
@@ -45,9 +46,10 @@ int main() {
     {
         const std::string ASSETS_ROOT = "../Assets/";
 
-        /*objl::Loader loader;
+        objl::Loader loader;
         loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
-        std::cout << loader.LoadedMeshes[0].MeshName << std::endl;*/
+        std::cout << loader.LoadedMeshes[0].MeshName << std::endl;
+        obj_mesh = loader.LoadedMeshes[0];
 
         std::vector<float> vertices = {
             0.5f, 0.5f, 0.0f, // top right
@@ -56,7 +58,7 @@ int main() {
             -0.5f, 0.5f, 0.0f // top left
         };
 
-        std::vector<int32_t> indices = {
+        std::vector<uint32_t> indices = {
             0, 3, 1, // first Triangle
             1, 3, 2 // second Triangle
         };
@@ -64,15 +66,15 @@ int main() {
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
             RED_RHI_MEMORY_TYPE_DEVICE,
-            vertices.size() * sizeof(float),
-            vertices.data()
+            obj_mesh.Vertices.size() * sizeof(objl::Vertex),
+            &obj_mesh.Vertices[0]
         );
 
         index_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_INDEX,
             RED_RHI_MEMORY_TYPE_DEVICE,
-            indices.size() * sizeof(uint32_t),
-            indices.data()
+            obj_mesh.Indices.size() * sizeof(uint32_t),
+            &obj_mesh.Indices[0]
         );
 
         int32_t width, height, channels;
@@ -94,7 +96,9 @@ int main() {
                 "layout (location = 0) in vec3 aPos;\n"
                 "void main()\n"
                 "{\n"
-                "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                "   vec3 offset = vec3(0.0f, -0.8f, 0.0f);\n"
+                "   vec3 position = vec3(aPos.x, aPos.y, aPos.z) + offset;\n"
+                "   gl_Position = vec4(position, 1.0);\n"
                 "}\0";
         std::string fragment_shader_src = "#version 460 core\n"
                 "out vec4 FragColor;\n"
@@ -114,15 +118,15 @@ int main() {
                         .index = 0,
                         .size = 3,
                         .type = RED_RHI_FORMAT_TYPE_FLOAT,
-                        .normalized = false,
-                        .stride = 3 * sizeof(float),
+                        .normalized = true,
+                        .stride = sizeof(objl::Vertex),
                         .offset = 0,
                     }
                 },
                 .topology = RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
             },
             .rasterizer_desc = RedRHIRasterizerDesc{
-                .cull_mode = RED_RHI_CULL_MODE_BACK
+                .cull_mode = RED_RHI_CULL_MODE_NONE
             },
             .blend_desc = RedRHIBlendDesc{
                 .blend_enable = false
@@ -149,7 +153,7 @@ int main() {
             rhi_device->ClearFrameBuffer();
 
             rhi_device->BindPipeline(pipeline);
-            rhi_device->Draw(6);
+            rhi_device->Draw(obj_mesh.Indices.size());
             rhi_device->BindPipeline(nullptr);
         }
 
