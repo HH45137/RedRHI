@@ -88,7 +88,8 @@ int main() {
             RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
             width,
             height,
-            8
+            8,
+            image_data
         );
         stbi_image_free(image_data);
 

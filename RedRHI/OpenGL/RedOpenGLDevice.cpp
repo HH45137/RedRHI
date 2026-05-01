@@ -142,15 +142,43 @@ RedRHITexture *RedOpenGLDevice::CreateTexture(
     RedRHITextureAddressType _address_type,
     int32_t _width,
     int32_t _height,
-    int32_t _mip_levels
+    int32_t _mip_levels,
+    unsigned char *_data
 ) {
-    auto texture = new RedRHITexture{};
+    auto texture = new RedOpenGLTexture{};
 
     texture->usage = _usage;
     texture->address_type = _address_type;
     texture->width = _width;
     texture->height = _height;
     texture->mip_levels = _mip_levels;
+
+    glGenTextures(1, &texture->gl_texture);
+    glBindTexture(GL_TEXTURE_2D, texture->gl_texture);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    if (_data) {
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGB,
+            texture->width,
+            texture->height,
+            0,
+            GL_RGB,
+            GL_UNSIGNED_BYTE,
+            _data
+        );
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        throw std::runtime_error("Failed to create texture");
+    }
 
     resource_poll.Register(texture);
 
