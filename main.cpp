@@ -45,6 +45,7 @@ int main() {
     RedRHIPipeline *pipeline = nullptr;
     {
         const std::string ASSETS_ROOT = "../Assets/";
+        const std::string SHADER_ROOT = ASSETS_ROOT + "shader/";
 
         objl::Loader loader;
         loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
@@ -93,20 +94,8 @@ int main() {
         );
         stbi_image_free(image_data);
 
-        std::string vertex_shader_src = "#version 460 core\n"
-                "layout (location = 0) in vec3 aPos;\n"
-                "void main()\n"
-                "{\n"
-                "   vec3 offset = vec3(0.0f, -0.8f, 0.0f);\n"
-                "   vec3 position = vec3(aPos.x, aPos.y, aPos.z) + offset;\n"
-                "   gl_Position = vec4(position, 1.0);\n"
-                "}\0";
-        std::string fragment_shader_src = "#version 460 core\n"
-                "out vec4 FragColor;\n"
-                "void main()\n"
-                "{\n"
-                "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                "}\n\0";
+        std::string vertex_shader_src = ReadTextFile(SHADER_ROOT + "mesh_test.vert");
+        std::string fragment_shader_src = ReadTextFile(SHADER_ROOT + "mesh_test.frag");
         RedRHIShader *vertex_shader = rhi_device->CreateShader(vertex_shader_src, RED_RHI_SHADER_STAGE_VERTEX);
         RedRHIShader *fragment_shader = rhi_device->CreateShader(fragment_shader_src, RED_RHI_SHADER_STAGE_FRAGMENT);
         shader_program = rhi_device->CreateShader(vertex_shader, fragment_shader);
