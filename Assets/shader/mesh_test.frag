@@ -2,7 +2,11 @@
 
 out vec4 FragColor;
 
+in vec3 outNorm;
+in vec2 outUV;
+
 void main()
 {
-   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+   vec3 color = outNorm * vec3(1.0f);
+   FragColor = vec4(color, 1.0f);
 }

@@ -104,17 +104,23 @@ void RedOpenGLDevice::BindBuffer(RedRHIBuffer *_buffer) {
             if (!bound_pipeline) { break; }
             auto &attrs = bound_pipeline->desc.vertex_input_desc.attributes;
 
+            glBindBuffer(GL_ARRAY_BUFFER, buffer->gl_buffer);
+
             for (auto &attr: attrs) {
                 if (attr.size > 0) {
-                    glBindVertexBuffer(
+                    glEnableVertexAttribArray(attr.index);
+                    GLenum gl_type = MapFormatType(attr.type);
+                    glVertexAttribPointer(
                         attr.index,
-                        buffer->gl_buffer,
-                        0,
-                        attr.stride
+                        attr.size,
+                        gl_type,
+                        attr.normalized,
+                        attr.stride,
+                        reinterpret_cast<void *>(attr.offset)
                     );
-                    break;
                 }
             }
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             break;
         }
 
@@ -263,40 +269,14 @@ void RedOpenGLDevice::DestroyShader(RedRHIShader *_shader) {
 
 RedRHIPipeline *RedOpenGLDevice::CreatePipeline(RedRHIPipelineDesc _desc) {
     auto pipeline = new RedOpenGLPipeline();
-
     pipeline->desc = _desc;
 
+    // 仅创建VAO，不配置顶点属性（延迟到BindBuffer阶段）
     glGenVertexArrays(1, &pipeline->gl_vao);
     glBindVertexArray(pipeline->gl_vao);
-    for (auto &item: _desc.vertex_input_desc.attributes) {
-        glEnableVertexAttribArray(item.index);
-        GLenum gl_type = MapFormatType(item.type);
-        /*glVertexAttribPointer(
-            item.index,
-            item.size,
-            gl_type,
-            item.normalized,
-            item.stride,
-            reinterpret_cast<void *>(item.offset)
-        );*/
-
-        glVertexAttribFormat(
-            item.index,
-            item.size,
-            gl_type,
-            item.normalized,
-            item.offset
-        );
-        glVertexAttribBinding(
-            item.index,
-            item.index
-        );
-        glEnableVertexAttribArray(item.index);
-    }
     glBindVertexArray(0);
 
     resource_poll.Register(pipeline);
-
     return pipeline;
 }
 

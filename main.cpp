@@ -48,21 +48,10 @@ int main() {
         const std::string SHADER_ROOT = ASSETS_ROOT + "shader/";
 
         objl::Loader loader;
+        // loader.LoadFile(ASSETS_ROOT + "mesh/box.obj");
         loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
         std::cout << loader.LoadedMeshes[0].MeshName << std::endl;
         obj_mesh = loader.LoadedMeshes[0];
-
-        std::vector<float> vertices = {
-            0.5f, 0.5f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, // bottom left
-            -0.5f, 0.5f, 0.0f // top left
-        };
-
-        std::vector<uint32_t> indices = {
-            0, 3, 1, // first Triangle
-            1, 3, 2 // second Triangle
-        };
 
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
@@ -108,9 +97,25 @@ int main() {
                         .index = 0,
                         .size = 3,
                         .type = RED_RHI_FORMAT_TYPE_FLOAT,
-                        .normalized = true,
+                        .normalized = false,
                         .stride = sizeof(objl::Vertex),
-                        .offset = 0,
+                        .offset = offsetof(objl::Vertex, Position)
+                    },
+                    RedRHIVertexAttributeDesc{
+                        .index = 1,
+                        .size = 3,
+                        .type = RED_RHI_FORMAT_TYPE_FLOAT,
+                        .normalized = false,
+                        .stride = sizeof(objl::Vertex),
+                        .offset = offsetof(objl::Vertex, Normal)
+                    },
+                    RedRHIVertexAttributeDesc{
+                        .index = 2,
+                        .size = 2,
+                        .type = RED_RHI_FORMAT_TYPE_FLOAT,
+                        .normalized = false,
+                        .stride = sizeof(objl::Vertex),
+                        .offset = offsetof(objl::Vertex, TextureCoordinate)
                     }
                 },
                 .topology = RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
