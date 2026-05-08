@@ -58,7 +58,8 @@ public:
         RedRHITextureAddressType _address_type,
         int32_t _width,
         int32_t _height,
-        int32_t _mip_levels
+        int32_t _mip_levels,
+        unsigned char *_data
     ) = 0;
 
     virtual RedRHIShader *CreateShader(std::string &_src, RedRHIShaderStage _stage) = 0;

@@ -45,23 +45,13 @@ int main() {
     RedRHIPipeline *pipeline = nullptr;
     {
         const std::string ASSETS_ROOT = "../Assets/";
+        const std::string SHADER_ROOT = ASSETS_ROOT + "shader/";
 
         objl::Loader loader;
+        // loader.LoadFile(ASSETS_ROOT + "mesh/box.obj");
         loader.LoadFile(ASSETS_ROOT + "6Hz/6Hz.obj");
         std::cout << loader.LoadedMeshes[0].MeshName << std::endl;
         obj_mesh = loader.LoadedMeshes[0];
-
-        std::vector<float> vertices = {
-            0.5f, 0.5f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, // bottom left
-            -0.5f, 0.5f, 0.0f // top left
-        };
-
-        std::vector<uint32_t> indices = {
-            0, 3, 1, // first Triangle
-            1, 3, 2 // second Triangle
-        };
 
         vertex_buffer = rhi_device->CreateBuffer(
             RED_RHI_BUFFER_USAGE_VERTEX,
@@ -88,24 +78,13 @@ int main() {
             RED_RHI_TEXTURE_ADDRESS_TYPE_REPEAT,
             width,
             height,
-            8
+            8,
+            image_data
         );
         stbi_image_free(image_data);
 
-        std::string vertex_shader_src = "#version 460 core\n"
-                "layout (location = 0) in vec3 aPos;\n"
-                "void main()\n"
-                "{\n"
-                "   vec3 offset = vec3(0.0f, -0.8f, 0.0f);\n"
-                "   vec3 position = vec3(aPos.x, aPos.y, aPos.z) + offset;\n"
-                "   gl_Position = vec4(position, 1.0);\n"
-                "}\0";
-        std::string fragment_shader_src = "#version 460 core\n"
-                "out vec4 FragColor;\n"
-                "void main()\n"
-                "{\n"
-                "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                "}\n\0";
+        std::string vertex_shader_src = ReadTextFile(SHADER_ROOT + "mesh_test.vert");
+        std::string fragment_shader_src = ReadTextFile(SHADER_ROOT + "mesh_test.frag");
         RedRHIShader *vertex_shader = rhi_device->CreateShader(vertex_shader_src, RED_RHI_SHADER_STAGE_VERTEX);
         RedRHIShader *fragment_shader = rhi_device->CreateShader(fragment_shader_src, RED_RHI_SHADER_STAGE_FRAGMENT);
         shader_program = rhi_device->CreateShader(vertex_shader, fragment_shader);
@@ -118,9 +97,25 @@ int main() {
                         .index = 0,
                         .size = 3,
                         .type = RED_RHI_FORMAT_TYPE_FLOAT,
-                        .normalized = true,
+                        .normalized = false,
                         .stride = sizeof(objl::Vertex),
-                        .offset = 0,
+                        .offset = offsetof(objl::Vertex, Position)
+                    },
+                    RedRHIVertexAttributeDesc{
+                        .index = 1,
+                        .size = 3,
+                        .type = RED_RHI_FORMAT_TYPE_FLOAT,
+                        .normalized = false,
+                        .stride = sizeof(objl::Vertex),
+                        .offset = offsetof(objl::Vertex, Normal)
+                    },
+                    RedRHIVertexAttributeDesc{
+                        .index = 2,
+                        .size = 2,
+                        .type = RED_RHI_FORMAT_TYPE_FLOAT,
+                        .normalized = false,
+                        .stride = sizeof(objl::Vertex),
+                        .offset = offsetof(objl::Vertex, TextureCoordinate)
                     }
                 },
                 .topology = RED_RHI_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
