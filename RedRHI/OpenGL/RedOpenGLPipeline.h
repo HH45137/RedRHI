@@ -4,5 +4,5 @@
 
 
 struct RedOpenGLPipeline : RedRHIPipeline {
-    uint32_t gl_vao{};
+    unsigned int gl_vao = 0;
 };

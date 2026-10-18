@@ -4,9 +4,9 @@
 
 
 struct RedOpenGLBuffer : RedRHIBuffer {
-    uint32_t gl_buffer;
+    unsigned int gl_buffer = 0;
 };
 
 struct RedOpenGLTexture : RedRHITexture {
-    uint32_t gl_texture;
+    unsigned int gl_texture = 0;
 };
