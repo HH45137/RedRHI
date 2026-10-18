@@ -46,12 +46,12 @@ enum RedRHIBlendFactor {
 
 
 struct RedRHIVertexAttributeDesc {
-    int32_t index{};
-    int32_t size{};
+    int32_t index = 0;
+    int32_t size = 0;
     RedRHIFormatType type = RED_RHI_FORMAT_TYPE_FLOAT;
-    bool normalized{};
-    int32_t stride{};
-    int32_t offset{};
+    bool normalized = 0;
+    int32_t stride = 0;
+    int32_t offset = 0;
 };
 
 struct RedRHIVertexInputDesc {
@@ -78,7 +78,7 @@ struct RedRHIBlendDesc {
 };
 
 struct RedRHIPipelineDesc {
-    RedRHIShader *shader{};
+    RedRHIShader *shader = nullptr;
     RedRHIVertexInputDesc vertex_input_desc;
     RedRHIRasterizerDesc rasterizer_desc;
     RedRHIDepthStencilDesc depth_stencil_desc;

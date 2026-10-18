@@ -63,20 +63,20 @@ enum RedRHITextureFormat {
 
 struct RedRHIResource {
     std::string uuid = GEN_UUID_STR;
-    size_t ref_count;
-    std::string debug_name;
+    size_t ref_count = 0;
+    std::string debug_name = "";
 };
 
 struct RedRHIBuffer : RedRHIResource {
     RedRHIBufferUsage usage;
     RedRHIMemoryType memory_type;
-    size_t size;
+    size_t size = 0;
 };
 
 struct RedRHITexture : RedRHIResource {
     RedRHITextureFormat usage;
     RedRHITextureSamplerType sampler_type;
     RedRHITextureAddressType address_type;
-    int32_t width, height;
-    int32_t mip_levels;
+    int32_t width = 0, height = 0;
+    int32_t mip_levels = 0;
 };

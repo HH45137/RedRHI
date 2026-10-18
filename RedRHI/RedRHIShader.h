@@ -1,7 +1,6 @@
 #pragma once
 
 #include "RedRHIBuffer.h"
-#include "RedRHIUtility.h"
 
 
 enum RedRHIShaderStage {
@@ -13,7 +12,7 @@ enum RedRHIShaderStage {
 };
 
 struct RedRHIShader : RedRHIResource {
-    std::string src{};
+    std::string src = "";
     std::string entry_point = "main";
     RedRHIShaderStage stage = RED_RHI_SHADER_STAGE_VERTEX;
 };

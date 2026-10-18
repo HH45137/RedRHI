@@ -1,11 +1,9 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 #include <mutex>
 
 #include "RedRHIBuffer.h"
-#include "RedRHIUtility.h"
 
 
 class RedRHIResourcePool {
